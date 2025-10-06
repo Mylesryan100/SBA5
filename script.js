@@ -31,3 +31,28 @@ function loadFromStorage() {
     posts = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(posts)) posts = [];
 }
+
+function saveToStorage() {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+}
+// this function sets up form validation
+function validateForm() {
+let ok = true;
+const title = titleInput.value.trim();
+const content = contentInput.value.trim();
+// this section clears all previous errors
+titleError.textContent = '';
+contentError.textContent = '';
+formErrors.textContent = '';
+
+if (!title) { titleError.textContent = 'Please enter a title.'; ok = false; }
+
+if (!content) { contentError.textContent = 'Please enter some content.'; ok = false; }
+
+if (!ok) {
+formErrors.textContent = 'Form has errors. Please fix them and try again.';
+if (!title) titleInput.focus(); else if (!content) contentInput.focus();
+return false;
+}
+return { title, content };
+}
