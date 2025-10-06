@@ -56,3 +56,61 @@ return false;
 }
 return { title, content };
 }
+
+function clearForm() {
+postForm.reset();
+postIdInput.value = '';
+editingId = null;
+submitBtn.textContent = 'Add Post';
+cancelEditBtn.hidden = true;
+titleError.textContent = '';
+contentError.textContent = '';
+formErrors.textContent = '';
+}
+// this function/section renders the posts
+function render() {
+postsList.innerHTML = '';
+const sorted = [...posts].sort((a,b) => b.updatedAt - a.updatedAt);
+countHint.textContent = `${sorted.length} ${sorted.length === 1 ? 'post' : 'posts'}`;
+
+if (sorted.length === 0) { emptyState.style.display = ''; return; }
+emptyState.style.display = 'none';
+
+for (const p of sorted) {
+const wrapper = document.createElement('article');
+wrapper.className = 'post';
+wrapper.dataset.id = p.id;
+wrapper.setAttribute('aria-labelledby', `title-${p.id}`);
+
+const h3 = document.createElement('h3'); h3.id = `title-${p.id}`; h3.textContent = p.title;
+
+const meta = document.createElement('div'); meta.className = 'meta';
+meta.textContent = p.updatedAt !== p.createdAt ? `Created ${fmt(p.createdAt)} • Updated ${fmt(p.updatedAt)}` : `Created ${fmt(p.createdAt)}`;
+
+const body = document.createElement('div'); body.className = 'content'; body.textContent = p.content;
+
+const actions = document.createElement('div'); actions.className = 'row';
+const editBtn = document.createElement('button'); editBtn.type = 'button'; editBtn.className = 'btn-muted'; editBtn.textContent = 'Edit'; editBtn.setAttribute('data-action', 'edit');
+const delBtn = document.createElement('button'); delBtn.type = 'button'; delBtn.className = 'btn-danger'; delBtn.textContent = 'Delete'; delBtn.setAttribute('data-action', 'delete');
+actions.append(editBtn, delBtn);
+
+wrapper.append(h3, meta, body, actions);
+postsList.appendChild(wrapper);
+}
+}
+
+function createPost({ title, content }) {
+    const now = Date.now();
+    const post = { id: String(now), title, content, createdAt: now, updatedAt: now };
+    posts.push(post);
+    saveToStorage();
+    render();
+}
+
+function updatePost (id, { title, content }) {
+    const idx = posts.findIndex(p => p.id === id);
+    if (idx === -1) return;
+    posts[idx] = { ...posts[idx], title, content, updatedAt: Date.now() };
+    saveToStorage();
+    render();
+}
