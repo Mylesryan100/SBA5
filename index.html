@@ -17,13 +17,45 @@
 
         <section class="card" aria-labelledby="composerTitle">
             <h2 id="composerTitle">Create / Edit Post</h2>
-            <p class="hint">Both fields are required. Data persists in your browser using <code>local
+            <p class="hint">Both fields are required. Data persists in your browser using <code>localStorage</code>.</p>
+
+            <form id="postForm" novalidate aria-describedby="formErrors" autocomplete="off">
 
                 <input type="hidden" id="post" value="" />
 
                 <label for="title">Title</label>
-                <input id="title" name="title" type="text" placeholder="e.g., Morning"
-                <div id="titleError"
-    
+                <input id="title" name="title" type="text" placeholder="e.g., Morning reflections" required aria-describedby="titleError"
+                <div id="titleError" class="error" aria-live="polite"></div>
+
+                <label for="content">Content</label>
+                <textarea  id="content" name="content" placeholder="What's on your mind?" required aria-describedby="contentError"></textarea>
+                <div id="contentError" class="error" aria-live="polite"></div>
+
+                <!-- This are the form action buttons-->
+                <div class="row">
+                   <button type="submit" id="submitBtn" class="btn-primary">Add Post</button>
+                   <button type="button" id="cancelEditBtn" class="btn-ghost" hidden>Cancel Edit</button>
+                   <button type="reset" class="btn-muted">Clear</button>
+                </div>
+
+
+                <p id="formErrors" class="sr-only" aria-live="assertive"></p>
+              </form>
+            </section>
+
+            <section class="card" aria-labelledby="postsHeading">
+                <div class="row" style="justify-content: space-between; align-items: center;">
+                    <h2 id="postsHeading" style="margin: 0">Posts</h2>
+                    <div class="hint" id="countHint">0 posts</div>
+                </div>
+                <div id="posts" aria-live="polite">
+
+                    <div id="emptyState" class="empty">No posts yet. Be the first to add one!</div>
+                    <div id="postsList"></div>
+                </div>
+            </section>
+    </main>
+    <script src="script.js"></script>
+   
 </body>
 </html>
