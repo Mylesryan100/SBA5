@@ -35,7 +35,7 @@ function loadFromStorage() {
 function saveToStorage() {
 localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
 }
-// this function sets up form validation
+// this section sets up form validation
 function validateForm() {
 let ok = true;
 const title = titleInput.value.trim();
@@ -67,7 +67,7 @@ titleError.textContent = '';
 contentError.textContent = '';
 formErrors.textContent = '';
 }
-// this function/section renders the posts
+// this section renders the posts
 function render() {
 postsList.innerHTML = '';
 const sorted = [...posts].sort((a,b) => b.updatedAt - a.updatedAt);
@@ -88,7 +88,7 @@ const meta = document.createElement('div'); meta.className = 'meta';
 meta.textContent = p.updatedAt !== p.createdAt ? `Created ${fmt(p.createdAt)} • Updated ${fmt(p.updatedAt)}` : `Created ${fmt(p.createdAt)}`;
 
 const body = document.createElement('div'); body.className = 'content'; body.textContent = p.content;
-
+// this section is for the edit and delete buttons/actions
 const actions = document.createElement('div'); actions.className = 'row';
 const editBtn = document.createElement('button'); editBtn.type = 'button'; editBtn.className = 'btn-muted'; editBtn.textContent = 'Edit'; editBtn.setAttribute('data-action', 'edit');
 const delBtn = document.createElement('button'); delBtn.type = 'button'; delBtn.className = 'btn-danger'; delBtn.textContent = 'Delete'; delBtn.setAttribute('data-action', 'delete');
@@ -98,7 +98,7 @@ wrapper.append(h3, meta, body, actions);
 postsList.appendChild(wrapper);
 }
 }
-
+// This section is for the CRUD (create,read,update,and delete) Operations 
 function createPost({ title, content }) {
     const now = Date.now();
     const post = { id: String(now), title, content, createdAt: now, updatedAt: now };
@@ -114,3 +114,64 @@ function updatePost (id, { title, content }) {
     saveToStorage();
     render();
 }
+
+function deletePost(id) {
+    posts = posts.filter(p=> p.id !== id);
+    saveToStorage();
+    render();
+}
+
+// This section is for event listeners
+postForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const result = validateForm();
+if (!result) return;
+if (editingId) updatePost(editingId, result); else createPost(result);
+clearForm();
+});
+
+cancelEditBtn.addEventListener('click', () => { clearForm(); titleInput.focus(); });
+
+// This is a delegated event listener for the edit and delete buttons
+postsList.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const postEl = btn.closest('.post');
+    if(!postEl) return;
+    const id = postEl.dataset.id;
+
+    if (action === 'edit') {
+        const post = posts.find(p => p.id === id);
+        if (!post) return;
+        editingId = id;
+        postIdInput.value = id;
+        titleInput.value = post.title;
+        contentInput.value = post.content;
+        submitBtn.textContent = 'Update Post.';
+        cancelEditBtn.hidden = false;
+        titleInput.focus();
+    }
+
+    if (action === 'delete') {
+        if (confirm('Delete this post? This cannot be undone.')) {
+            deletePost(id);
+            if (editingId === id) clearForm();
+        }
+    }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => { loadFromStorage(); render(); });
+
+
+
+
+
+
+
+
+
+
+
+
+
