@@ -9,7 +9,8 @@ const $ = (sel, ctx=document) => ctx.querySelector(sel);
 const postForm = $('#postForm');
 const titleInput = $('#title');
 const contentInput = $('#content');
-const postIdInput = $('#submitBtn');
+const postIdInput = $('#postId');
+const submitBtn = $('#submitBtn');
 const cancelEditBtn = $('#cancelEditBtn');
 
 // These are the error containers
@@ -148,7 +149,7 @@ postsList.addEventListener('click', (e) => {
         postIdInput.value = id;
         titleInput.value = post.title;
         contentInput.value = post.content;
-        submitBtn.textContent = 'Update Post.';
+        submitBtn.textContent = 'Update Post';
         cancelEditBtn.hidden = false;
         titleInput.focus();
     }
