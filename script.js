@@ -2,18 +2,29 @@
 const STORAGE_KEY = 'blogPosts';
 let posts = [];
 let editingId = null;
-// This is the Utlity/tool to select elements
+// This is the Utlity/tool to select elements. It's a shortcut for the queryselector and also accepts a css selector
+// The "$" is considered a helper or shortcut that selects one DOM Element.
 const $ = (sel, ctx=document) => ctx.querySelector(sel);
 
 // These are all the elements for the form
+
+// This is the <form>
 const postForm = $('#postForm');
+
+// These are considered the text control
 const titleInput = $('#title');
+
+// Also more text controls
 const contentInput = $('#content');
+
+// This is a hidden field that mirrors the EditingId
 const postIdInput = $('#postId');
+// Submit button that gives you the option to toggle Update Post or Add Post.
 const submitBtn = $('#submitBtn');
+// Edit button
 const cancelEditBtn = $('#cancelEditBtn');
 
-// These are the error containers
+// These are the error containers that help with debugging and displays form level validation and per-field errors
 const titleError = $('#titleError');
 const contentError = $('#contentError');
 const formErrors = $('#formErrors');
@@ -23,7 +34,8 @@ const postsList = $('#postsList');
 const emptyState = $('#emptyState');
 const countHint = $('#countHint');
 
-// Helps format the timestamp
+// Helps format the timestamp got meta lines
+// "fmt"
 const fmt = (ts) => new Date(ts).toLocaleString();
 
 // This function helps with the persistence of the LocalStorage
@@ -35,6 +47,7 @@ function loadFromStorage() {
 
 function saveToStorage() {
 localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+console.log(`Saved ${posts.length} post(s) to localStorage.`);
 }
 // this section sets up form validation
 function validateForm() {
@@ -104,6 +117,7 @@ function createPost({ title, content }) {
     const now = Date.now();
     const post = { id: String(now), title, content, createdAt: now, updatedAt: now };
     posts.push(post);
+    console.log('Post created:', post);
     saveToStorage();
     render();
 }
@@ -112,6 +126,7 @@ function updatePost (id, { title, content }) {
     const idx = posts.findIndex(p => p.id === id);
     if (idx === -1) return;
     posts[idx] = { ...posts[idx], title, content, updatedAt: Date.now() };
+    console.log('Post deleted:', id);
     saveToStorage();
     render();
 }
